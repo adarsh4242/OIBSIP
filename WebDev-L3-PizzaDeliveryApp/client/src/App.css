@@ -99,7 +99,8 @@ button:hover {
 
 .checkout-form input,
 .checkout-form textarea,
-select {
+.status-row select,
+.filter-box select {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
@@ -152,6 +153,53 @@ p {
   line-height: 1.5;
 }
 
+.error-text {
+  color: red;
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.view-orders-wrapper {
+  margin-top: 30px;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-box {
+  min-width: 240px;
+}
+
+.filter-box label {
+  margin: 0;
+  display: block;
+}
+
+.status-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.status-row label {
+  font-weight: 600;
+  margin: 0;
+}
+
+.status-row select {
+  max-width: 220px;
+}
+
+.ordered-items {
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .App {
     padding: 15px;
@@ -169,5 +217,16 @@ p {
 
   button {
     width: 100%;
+  }
+
+  .status-row select,
+  .filter-box {
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .orders-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

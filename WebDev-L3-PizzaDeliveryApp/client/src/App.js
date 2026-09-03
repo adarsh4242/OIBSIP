@@ -16,6 +16,7 @@ function App() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [errors, setErrors] = useState({});
+  const [statusFilter, setStatusFilter] = useState("All");
   const [customer, setCustomer] = useState({
     name: "",
     phone: "",
@@ -223,6 +224,11 @@ function App() {
     }
   };
 
+  const filteredOrders =
+    statusFilter === "All"
+      ? orders
+      : orders.filter((order) => order.status === statusFilter);
+
   return (
     <div className="App">
       <h1>Pizza Delivery App</h1>
@@ -312,11 +318,29 @@ function App() {
 
       {showOrders && (
         <div className="orders-section">
-          <h2>All Orders</h2>
-          {orders.length === 0 ? (
-            <p>No orders found.</p>
+          <div className="orders-header">
+            <h2>All Orders</h2>
+
+            <div className="filter-box">
+              <label htmlFor="statusFilter">Filter by Status:</label>
+              <select
+                id="statusFilter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Preparing">Preparing</option>
+                <option value="Out for Delivery">Out for Delivery</option>
+                <option value="Delivered">Delivered</option>
+              </select>
+            </div>
+          </div>
+
+          {filteredOrders.length === 0 ? (
+            <p>No orders found for selected status.</p>
           ) : (
-            orders.map((order) => (
+            filteredOrders.map((order) => (
               <div key={order._id} className="order-card">
                 <h3>{order.name}</h3>
                 <p>Phone: {order.phone}</p>
