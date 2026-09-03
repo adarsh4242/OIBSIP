@@ -40,4 +40,54 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({
+        message: "Order not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Order status updated successfully",
+      order: updatedOrder
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update order status",
+      error: error.message
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedOrder = await Order.findByIdAndDelete(req.params.id);
+
+    if (!deletedOrder) {
+      return res.status(404).json({
+        message: "Order not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Order deleted successfully",
+      order: deletedOrder
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete order",
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

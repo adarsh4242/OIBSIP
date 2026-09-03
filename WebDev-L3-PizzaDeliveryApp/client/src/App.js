@@ -13,6 +13,9 @@ function App() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [orders, setOrders] = useState([]);
   const [showOrders, setShowOrders] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [errors, setErrors] = useState({});
   const [customer, setCustomer] = useState({
     name: "",
     phone: "",
@@ -52,6 +55,7 @@ function App() {
   const clearCart = () => {
     setCart([]);
     setShowCheckout(false);
+    setErrors({});
     setCustomer({
       name: "",
       phone: "",
@@ -61,6 +65,7 @@ function App() {
 
   const handleChange = (e) => {
     setCustomer({ ...customer, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const totalPrice = cart.reduce(
@@ -68,11 +73,38 @@ function App() {
     0
   );
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!customer.name.trim() || customer.name.trim().length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+    }
+
+    if (!/^\d{10}$/.test(customer.phone)) {
+      newErrors.phone = "Phone number must be exactly 10 digits";
+    }
+
+    if (!customer.address.trim() || customer.address.trim().length < 5) {
+      newErrors.address = "Address must be at least 5 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     if (cart.length === 0) {
-      alert("Your cart is empty");
+      setMessage("Your cart is empty");
+      setMessageType("error");
+      return;
+    }
+
+    if (!validateForm()) {
+      setMessage("Please fix the form errors");
+      setMessageType("error");
       return;
     }
 
@@ -96,21 +128,25 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message || "Order placed successfully!");
+        setMessage(data.message || "Order placed successfully!");
+        setMessageType("success");
         setCart([]);
         setCustomer({
           name: "",
           phone: "",
           address: ""
         });
+        setErrors({});
         setShowCheckout(false);
         fetchOrders();
       } else {
-        alert(data.message || "Failed to place order");
+        setMessage(data.message || "Failed to place order");
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Order error:", error);
-      alert("Failed to place order");
+      setMessage("Failed to place order");
+      setMessageType("error");
     }
   };
 
@@ -123,19 +159,89 @@ function App() {
         setOrders(data);
         setShowOrders(true);
       } else {
-        alert(data.message || "Failed to fetch orders");
+        setMessage(data.message || "Failed to fetch orders");
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Fetch orders error:", error);
-      alert("Failed to fetch orders");
+      setMessage("Failed to fetch orders");
+      setMessageType("error");
+    }
+  };
+
+  const deleteOrder = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/${id}`, {
+        method: "DELETE"
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message || "Order deleted successfully");
+        setMessageType("success");
+        setOrders(orders.filter((order) => order._id !== id));
+      } else {
+        setMessage(data.message || "Failed to delete order");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Delete order error:", error);
+      setMessage("Failed to delete order");
+      setMessageType("error");
+    }
+  };
+
+  const updateOrderStatus = async (id, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message || "Order status updated successfully");
+        setMessageType("success");
+        setOrders(
+          orders.map((order) =>
+            order._id === id ? { ...order, status: newStatus } : order
+          )
+        );
+      } else {
+        setMessage(data.message || "Failed to update order status");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Update status error:", error);
+      setMessage("Failed to update order status");
+      setMessageType("error");
     }
   };
 
   return (
     <div className="App">
       <h1>Pizza Delivery App</h1>
-      <h2>Our Menu</h2>
 
+      {message && (
+        <div
+          style={{
+            backgroundColor: messageType === "success" ? "#d4edda" : "#f8d7da",
+            color: messageType === "success" ? "#155724" : "#721c24",
+            padding: "10px",
+            margin: "15px 0",
+            borderRadius: "5px"
+          }}
+        >
+          {message}
+        </div>
+      )}
+
+      <h2>Our Menu</h2>
       <div className="pizza-list">
         {pizzas.map((pizza) => (
           <div key={pizza.id} className="pizza-card">
@@ -181,6 +287,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
+              {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
 
               <input
                 type="text"
@@ -190,6 +297,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
+              {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
 
               <textarea
                 name="address"
@@ -198,6 +306,9 @@ function App() {
                 onChange={handleChange}
                 required
               />
+              {errors.address && (
+                <p style={{ color: "red" }}>{errors.address}</p>
+              )}
 
               <button type="submit">Place Order</button>
             </form>
@@ -221,6 +332,21 @@ function App() {
                 <p>Phone: {order.phone}</p>
                 <p>Address: {order.address}</p>
                 <p>Total Price: ₹{order.totalPrice}</p>
+                <p>Status: {order.status}</p>
+
+                <label>Update Status: </label>
+                <select
+                  value={order.status}
+                  onChange={(e) =>
+                    updateOrderStatus(order._id, e.target.value)
+                  }
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Preparing">Preparing</option>
+                  <option value="Out for Delivery">Out for Delivery</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
+
                 <p>
                   Ordered Items:
                   {order.cart.map((item, index) => (
@@ -231,6 +357,10 @@ function App() {
                     </span>
                   ))}
                 </p>
+
+                <button onClick={() => deleteOrder(order._id)}>
+                  Delete Order
+                </button>
               </div>
             ))
           )}
