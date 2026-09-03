@@ -228,15 +228,7 @@ function App() {
       <h1>Pizza Delivery App</h1>
 
       {message && (
-        <div
-          style={{
-            backgroundColor: messageType === "success" ? "#d4edda" : "#f8d7da",
-            color: messageType === "success" ? "#155724" : "#721c24",
-            padding: "10px",
-            margin: "15px 0",
-            borderRadius: "5px"
-          }}
-        >
+        <div className={`alert-box ${messageType === "success" ? "success" : "error"}`}>
           {message}
         </div>
       )}
@@ -287,7 +279,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
-              {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
+              {errors.name && <p className="error-text">{errors.name}</p>}
 
               <input
                 type="text"
@@ -297,7 +289,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
-              {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
+              {errors.phone && <p className="error-text">{errors.phone}</p>}
 
               <textarea
                 name="address"
@@ -306,9 +298,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
-              {errors.address && (
-                <p style={{ color: "red" }}>{errors.address}</p>
-              )}
+              {errors.address && <p className="error-text">{errors.address}</p>}
 
               <button type="submit">Place Order</button>
             </form>
@@ -316,7 +306,7 @@ function App() {
         </div>
       )}
 
-      <div style={{ marginTop: "30px" }}>
+      <div className="view-orders-wrapper">
         <button onClick={fetchOrders}>View Orders</button>
       </div>
 
@@ -334,20 +324,23 @@ function App() {
                 <p>Total Price: ₹{order.totalPrice}</p>
                 <p>Status: {order.status}</p>
 
-                <label>Update Status: </label>
-                <select
-                  value={order.status}
-                  onChange={(e) =>
-                    updateOrderStatus(order._id, e.target.value)
-                  }
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Preparing">Preparing</option>
-                  <option value="Out for Delivery">Out for Delivery</option>
-                  <option value="Delivered">Delivered</option>
-                </select>
+                <div className="status-row">
+                  <label htmlFor={`status-${order._id}`}>Update Status:</label>
+                  <select
+                    id={`status-${order._id}`}
+                    value={order.status}
+                    onChange={(e) =>
+                      updateOrderStatus(order._id, e.target.value)
+                    }
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Preparing">Preparing</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                </div>
 
-                <p>
+                <p className="ordered-items">
                   Ordered Items:
                   {order.cart.map((item, index) => (
                     <span key={index}>
