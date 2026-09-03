@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 const pizzas = [
   { id: 1, name: "Margherita", price: 199 },
   { id: 2, name: "Farmhouse", price: 249 },
@@ -118,7 +120,7 @@ function App() {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/orders", {
+      const response = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -153,7 +155,7 @@ function App() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/orders");
+      const response = await fetch(`${API_URL}/api/orders`);
       const data = await response.json();
 
       if (response.ok) {
@@ -172,7 +174,7 @@ function App() {
 
   const deleteOrder = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${id}`, {
+      const response = await fetch(`${API_URL}/api/orders/${id}`, {
         method: "DELETE"
       });
 
@@ -195,7 +197,7 @@ function App() {
 
   const updateOrderStatus = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${id}`, {
+      const response = await fetch(`${API_URL}/api/orders/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
