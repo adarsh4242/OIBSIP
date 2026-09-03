@@ -11,6 +11,8 @@ const pizzas = [
 function App() {
   const [cart, setCart] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [showOrders, setShowOrders] = useState(false);
   const [customer, setCustomer] = useState({
     name: "",
     phone: "",
@@ -102,12 +104,30 @@ function App() {
           address: ""
         });
         setShowCheckout(false);
+        fetchOrders();
       } else {
         alert(data.message || "Failed to place order");
       }
     } catch (error) {
       console.error("Order error:", error);
       alert("Failed to place order");
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/orders");
+      const data = await response.json();
+
+      if (response.ok) {
+        setOrders(data);
+        setShowOrders(true);
+      } else {
+        alert(data.message || "Failed to fetch orders");
+      }
+    } catch (error) {
+      console.error("Fetch orders error:", error);
+      alert("Failed to fetch orders");
     }
   };
 
@@ -181,6 +201,38 @@ function App() {
 
               <button type="submit">Place Order</button>
             </form>
+          )}
+        </div>
+      )}
+
+      <div style={{ marginTop: "30px" }}>
+        <button onClick={fetchOrders}>View Orders</button>
+      </div>
+
+      {showOrders && (
+        <div className="orders-section">
+          <h2>All Orders</h2>
+          {orders.length === 0 ? (
+            <p>No orders found.</p>
+          ) : (
+            orders.map((order) => (
+              <div key={order._id} className="order-card">
+                <h3>{order.name}</h3>
+                <p>Phone: {order.phone}</p>
+                <p>Address: {order.address}</p>
+                <p>Total Price: ₹{order.totalPrice}</p>
+                <p>
+                  Ordered Items:
+                  {order.cart.map((item, index) => (
+                    <span key={index}>
+                      {" "}
+                      {item.name} x {item.quantity}
+                      {index < order.cart.length - 1 ? "," : ""}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            ))
           )}
         </div>
       )}
