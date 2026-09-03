@@ -50,6 +50,11 @@ function App() {
   const clearCart = () => {
     setCart([]);
     setShowCheckout(false);
+    setCustomer({
+      name: "",
+      phone: "",
+      address: ""
+    });
   };
 
   const handleChange = (e) => {
@@ -64,6 +69,11 @@ function App() {
   const handleCheckout = async (e) => {
     e.preventDefault();
 
+    if (cart.length === 0) {
+      alert("Your cart is empty");
+      return;
+    }
+
     const orderData = {
       name: customer.name,
       phone: customer.phone,
@@ -73,7 +83,7 @@ function App() {
     };
 
     try {
-      const response = await fetch("/api/orders/place", {
+      const response = await fetch("http://localhost:5000/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -84,14 +94,19 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        alert(data.message || "Order placed successfully!");
         setCart([]);
-        setCustomer({ name: "", phone: "", address: "" });
+        setCustomer({
+          name: "",
+          phone: "",
+          address: ""
+        });
         setShowCheckout(false);
       } else {
-        alert(data.message);
+        alert(data.message || "Failed to place order");
       }
     } catch (error) {
+      console.error("Order error:", error);
       alert("Failed to place order");
     }
   };
@@ -129,12 +144,15 @@ function App() {
 
           <div className="cart-buttons">
             <button onClick={clearCart}>Clear Cart</button>
-            <button onClick={() => setShowCheckout(true)}>Proceed to Checkout</button>
+            <button onClick={() => setShowCheckout(true)}>
+              Proceed to Checkout
+            </button>
           </div>
 
           {showCheckout && (
             <form className="checkout-form" onSubmit={handleCheckout}>
               <h3>Checkout Form</h3>
+
               <input
                 type="text"
                 name="name"
@@ -143,6 +161,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
+
               <input
                 type="text"
                 name="phone"
@@ -151,6 +170,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
+
               <textarea
                 name="address"
                 placeholder="Enter your address"
@@ -158,6 +178,7 @@ function App() {
                 onChange={handleChange}
                 required
               />
+
               <button type="submit">Place Order</button>
             </form>
           )}
