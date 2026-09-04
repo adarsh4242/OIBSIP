@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: pizza-shop-api
+    env: node
+    rootDir: WebDev-L3-PizzaDeliveryApp/server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: ACCESS_TOKEN_EXPIRES
+        value: 15m
+      - key: REFRESH_TOKEN_EXPIRES
+        value: 7d
+      - key: CLIENT_URL
+        value: https://adarsh4242.github.io
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAME_SITE
+        value: none
+      - key: STRIPE_SECRET_KEY
+        sync: false
