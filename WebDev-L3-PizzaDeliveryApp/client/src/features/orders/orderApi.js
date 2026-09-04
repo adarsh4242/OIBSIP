@@ -1,0 +1,1 @@
+import api from "../../api/axiosInstance"; export const getMyOrders = () => api.get("/orders/my"); export const getAdminOrders = () => api.get("/admin/orders"); export const updateOrderStatus = (id, orderStatus) => api.put(`/admin/orders/${id}/status`, { orderStatus });

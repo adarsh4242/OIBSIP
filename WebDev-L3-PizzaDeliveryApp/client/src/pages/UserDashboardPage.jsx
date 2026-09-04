@@ -1,0 +1,1 @@
+export default function UserDashboardPage() { return <div className="panel"><h1 className="text-3xl font-black">User dashboard</h1><p className="mt-2 text-black/60">Use the profile and order navigation.</p></div>; }

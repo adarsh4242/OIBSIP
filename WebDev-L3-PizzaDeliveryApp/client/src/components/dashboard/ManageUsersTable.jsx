@@ -1,0 +1,1 @@
+export default function ManageUsersTable({ users = [] }) { return <div className="panel">{users.map((user) => <div className="flex justify-between border-b py-3" key={user._id}><span>{user.name}</span><span>{user.email}</span><b>{user.role}</b></div>)}</div>; }

@@ -1,0 +1,1 @@
+export default function ProfileForm({ user }) { return <div className="panel"><h2 className="text-xl font-bold">Profile</h2><p className="mt-3">{user?.name}</p><p className="text-black/50">{user?.email}</p></div>; }

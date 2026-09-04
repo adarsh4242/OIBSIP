@@ -1,0 +1,1 @@
+export default function AdminDashboardPage() { return <div className="panel"><h1 className="text-3xl font-black">Admin dashboard</h1><p className="mt-2 text-black/60">Admin analytics are available from the protected admin route.</p></div>; }

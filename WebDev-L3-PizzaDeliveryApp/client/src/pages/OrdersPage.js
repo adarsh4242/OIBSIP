@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 
 function OrdersPage({ orders, fetchOrders }) {
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+  fetchOrders();
+}, [fetchOrders]);
 
   return (
     <div>

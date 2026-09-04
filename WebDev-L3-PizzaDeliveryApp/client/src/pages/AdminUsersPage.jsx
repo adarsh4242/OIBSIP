@@ -1,0 +1,1 @@
+export default function AdminUsersPage() { return <div className="panel"><h1 className="text-3xl font-black">Manage users</h1><p className="mt-2 text-black/60">User role APIs are admin-only.</p></div>; }

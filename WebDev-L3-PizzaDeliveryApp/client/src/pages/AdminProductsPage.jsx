@@ -1,0 +1,1 @@
+export default function AdminProductsPage() { return <div className="panel"><h1 className="text-3xl font-black">Manage products</h1><p className="mt-2 text-black/60">Product CRUD APIs are admin-only.</p></div>; }

@@ -1,0 +1,10 @@
+const Order = require("../models/Order");
+const stripe = require("../config/stripe");
+const createPaymentIntent = async (req, res) => { const amount = Math.round(Number(req.body.amount) * 100); if (!stripe) return res.status(503).json({ message: "Stripe is not configured" }); const intent = await stripe.paymentIntents.create({ amount, currency: "inr", metadata: { userId: req.user.id } }); res.json({ clientSecret: intent.client_secret }); };
+const create = async (req, res) => { const { orderItems, shippingAddress, totalPrice } = req.body; if (!orderItems?.length || !shippingAddress || !totalPrice) return res.status(400).json({ message: "Order items, shipping address, and total price are required" }); res.status(201).json(await Order.create({ ...req.body, user: req.user.id })); };
+const myOrders = async (req, res) => res.json(await Order.find({ user: req.user.id }).sort({ createdAt: -1 }));
+const getOne = async (req, res) => { const order = await Order.findOne({ _id: req.params.id, $or: [{ user: req.user.id }, ...(req.user.role === "admin" ? [{}] : [])] }).populate("user", "name email"); if (!order) return res.status(404).json({ message: "Order not found" }); res.json(order); };
+const markPaid = async (req, res) => { const order = await Order.findByIdAndUpdate(req.params.id, { isPaid: true, paymentStatus: "Paid", paymentIntentId: req.body.paymentIntentId, paidAt: new Date() }, { new: true }); if (!order) return res.status(404).json({ message: "Order not found" }); res.json(order); };
+const all = async (req, res) => res.json(await Order.find().populate("user", "name email").sort({ createdAt: -1 }));
+const updateStatus = async (req, res) => { const order = await Order.findByIdAndUpdate(req.params.id, { orderStatus: req.body.orderStatus }, { new: true, runValidators: true }); if (!order) return res.status(404).json({ message: "Order not found" }); res.json(order); };
+module.exports = { createPaymentIntent, create, myOrders, getOne, markPaid, all, updateStatus };

@@ -1,0 +1,1 @@
+export default function AdminOrdersPage() { return <div className="panel"><h1 className="text-3xl font-black">Manage orders</h1><p className="mt-2 text-black/60">Order status APIs are admin-only.</p></div>; }

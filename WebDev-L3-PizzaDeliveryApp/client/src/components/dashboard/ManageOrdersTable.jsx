@@ -1,0 +1,1 @@
+export default function ManageOrdersTable({ orders = [] }) { return <div className="panel">{orders.map((order) => <div className="flex justify-between border-b py-3" key={order._id}><span>#{order._id.slice(-8)}</span><span>{order.orderStatus}</span><b>₹{order.totalPrice}</b></div>)}</div>; }

@@ -1,0 +1,3 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"; import api from "../../api/axiosInstance";
+export const fetchProducts = createAsyncThunk("products/fetch", async (params = {}) => (await api.get("/products", { params })).data);
+const slice = createSlice({ name: "products", initialState: { items: [], meta: {}, loading: false, error: null }, reducers: {}, extraReducers: (builder) => builder.addCase(fetchProducts.pending, (s) => { s.loading = true; }).addCase(fetchProducts.fulfilled, (s, a) => { s.loading = false; s.items = a.payload.products; s.meta = a.payload; }).addCase(fetchProducts.rejected, (s, a) => { s.loading = false; s.error = a.error.message; }) }); export default slice.reducer;

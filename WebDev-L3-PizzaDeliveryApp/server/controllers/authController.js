@@ -1,0 +1,18 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const User = require("../models/User");
+const { generateAccessToken, generateRefreshToken } = require("../utils/generateTokens");
+const { setRefreshCookie, clearRefreshCookie } = require("../utils/setTokenCookie");
+const hash = (value) => crypto.createHash("sha256").update(value).digest("hex");
+const publicUser = (user) => ({ _id: user._id, name: user.name, email: user.email, role: user.role, avatar: user.avatar, savedAddresses: user.savedAddresses });
+const issue = async (user, res) => { const refreshToken = generateRefreshToken(user); user.refreshTokens.push({ tokenHash: hash(refreshToken) }); await user.save(); setRefreshCookie(res, refreshToken); return generateAccessToken(user); };
+const signup = async (req, res) => { const { name, email, password } = req.body; if (!name || !email || !password || password.length < 8) return res.status(400).json({ message: "Name, email, and password of at least 8 characters are required" }); const normalized = email.toLowerCase().trim(); if (await User.findOne({ email: normalized })) return res.status(409).json({ message: "Email is already registered" }); const user = await User.create({ name, email: normalized, password: await bcrypt.hash(password, 12) }); res.status(201).json({ accessToken: await issue(user, res), user: publicUser(user) }); };
+const login = async (req, res) => { const user = await User.findOne({ email: req.body.email?.toLowerCase().trim() }).select("+password"); if (!user || !user.isActive || !(await bcrypt.compare(req.body.password || "", user.password))) return res.status(401).json({ message: "Invalid email or password" }); res.json({ accessToken: await issue(user, res), user: publicUser(user) }); };
+const refresh = async (req, res) => { try { const token = req.cookies.refreshToken; const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET); const user = await User.findById(decoded.id); if (!user || !user.refreshTokens.some((item) => item.tokenHash === hash(token))) throw new Error(); user.refreshTokens = user.refreshTokens.filter((item) => item.tokenHash !== hash(token)); res.json({ accessToken: await issue(user, res), user: publicUser(user) }); } catch { res.status(401).json({ message: "Refresh token is invalid or expired" }); } };
+const logout = async (req, res) => { const token = req.cookies.refreshToken; if (token && req.user?.id) await User.findByIdAndUpdate(req.user.id, { $pull: { refreshTokens: { tokenHash: hash(token) } } }); clearRefreshCookie(res); res.json({ message: "Logged out" }); };
+const logoutAll = async (req, res) => { await User.findByIdAndUpdate(req.user.id, { refreshTokens: [] }); clearRefreshCookie(res); res.json({ message: "All sessions logged out" }); };
+const me = async (req, res) => res.json({ user: publicUser(await User.findById(req.user.id)) });
+const updateProfile = async (req, res) => { const user = await User.findByIdAndUpdate(req.user.id, { name: req.body.name, email: req.body.email?.toLowerCase(), avatar: req.body.avatar }, { new: true, runValidators: true }); res.json({ user: publicUser(user) }); };
+const changePassword = async (req, res) => { const user = await User.findById(req.user.id).select("+password"); if (!(await bcrypt.compare(req.body.currentPassword || "", user.password))) return res.status(400).json({ message: "Current password is incorrect" }); user.password = await bcrypt.hash(req.body.newPassword, 12); user.refreshTokens = []; await user.save(); clearRefreshCookie(res); res.json({ message: "Password changed. Please log in again." }); };
+module.exports = { signup, login, refresh, logout, logoutAll, me, updateProfile, changePassword };

@@ -1,0 +1,3 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"; import api from "../../api/axiosInstance";
+export const fetchMyOrders = createAsyncThunk("orders/my", async () => (await api.get("/orders/my")).data); export const createOrder = createAsyncThunk("orders/create", async (payload) => (await api.post("/orders", payload)).data);
+const slice = createSlice({ name: "orders", initialState: { items: [], loading: false, error: null }, reducers: {}, extraReducers: (builder) => builder.addCase(fetchMyOrders.fulfilled, (s, a) => { s.items = a.payload; }).addCase(createOrder.fulfilled, (s, a) => { s.items.unshift(a.payload); }) }); export default slice.reducer;

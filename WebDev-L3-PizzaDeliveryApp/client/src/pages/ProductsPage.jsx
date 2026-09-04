@@ -1,0 +1,1 @@
+export default function ProductsPage() { return <div className="panel"><h1 className="text-3xl font-black">Products</h1><p className="mt-2 text-black/60">The product catalog is routed through the main application.</p></div>; }

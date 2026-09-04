@@ -1,0 +1,1 @@
+export default function ProductFilterSidebar() { return <aside className="panel"><h2 className="font-bold">Filter menu</h2><p className="mt-2 text-sm text-black/50">Use the search and sort controls above.</p></aside>; }

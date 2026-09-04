@@ -1,0 +1,1 @@
+export default function EmptyState({ title = "Nothing here yet", text = "Check back soon." }) { return <div className="panel py-16 text-center"><h2 className="text-xl font-bold">{title}</h2><p className="mt-2 text-black/50">{text}</p></div>; }

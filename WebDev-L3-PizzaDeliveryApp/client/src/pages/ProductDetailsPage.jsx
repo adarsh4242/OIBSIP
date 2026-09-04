@@ -1,0 +1,1 @@
+export default function ProductDetailsPage() { return <div className="panel"><h1 className="text-3xl font-black">Product details</h1><p className="mt-2 text-black/60">Product details are available from the catalog links.</p></div>; }

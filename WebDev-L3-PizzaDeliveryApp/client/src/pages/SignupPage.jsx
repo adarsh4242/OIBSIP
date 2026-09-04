@@ -1,0 +1,1 @@
+export default function SignupPage() { return <div className="panel"><h1 className="text-3xl font-black">Signup</h1><p className="mt-2 text-black/60">Use the signup route in the application.</p></div>; }

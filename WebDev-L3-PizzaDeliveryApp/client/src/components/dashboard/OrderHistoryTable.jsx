@@ -1,0 +1,1 @@
+export default function OrderHistoryTable({ orders = [] }) { return <div className="panel overflow-x-auto"><table className="w-full text-left"><thead><tr><th>Order</th><th>Total</th><th>Status</th></tr></thead><tbody>{orders.map((order) => <tr key={order._id}><td>#{order._id.slice(-8)}</td><td>₹{order.totalPrice}</td><td>{order.orderStatus}</td></tr>)}</tbody></table></div>; }

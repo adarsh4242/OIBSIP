@@ -1,0 +1,1 @@
+export default function LoginPage() { return <div className="panel"><h1 className="text-3xl font-black">Login</h1><p className="mt-2 text-black/60">Use the login route in the application.</p></div>; }

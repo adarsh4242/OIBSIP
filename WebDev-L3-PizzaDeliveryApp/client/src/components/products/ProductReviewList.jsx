@@ -1,0 +1,1 @@
+export default function ProductReviewList({ reviews = [] }) { return <div className="space-y-3">{reviews.map((review) => <div className="rounded-xl bg-black/5 p-3" key={review._id}><b>★ {review.rating}</b><p>{review.comment}</p></div>)}</div>; }

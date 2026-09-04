@@ -1,0 +1,1 @@
+export default function ProfilePage() { return <div className="panel"><h1 className="text-3xl font-black">Profile</h1><p className="mt-2 text-black/60">Profile APIs are available under the user module.</p></div>; }

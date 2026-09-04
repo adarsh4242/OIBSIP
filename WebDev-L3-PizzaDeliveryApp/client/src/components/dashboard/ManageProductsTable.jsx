@@ -1,0 +1,1 @@
+export default function ManageProductsTable({ products = [] }) { return <div className="panel">{products.map((product) => <div className="flex justify-between border-b py-3" key={product._id}><span>{product.name}</span><span>₹{product.price} · {product.stock}</span></div>)}</div>; }

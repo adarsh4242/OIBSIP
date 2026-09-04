@@ -1,0 +1,1 @@
+export default function ProductCarousel({ images = [] }) { return <div className="grid grid-cols-2 gap-3">{images.map((image) => <img className="h-40 w-full rounded-2xl object-cover" key={image} src={image} alt="" />)}</div>; }

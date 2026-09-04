@@ -1,0 +1,1 @@
+export default function AdminStatsCards({ stats }) { return <div className="grid gap-4 sm:grid-cols-4">{Object.entries(stats || {}).filter(([key]) => ["users", "products", "orders", "revenue"].includes(key)).map(([key, value]) => <div className="panel" key={key}><p className="text-sm text-black/50">{key}</p><b className="text-2xl">{value}</b></div>)}</div>; }

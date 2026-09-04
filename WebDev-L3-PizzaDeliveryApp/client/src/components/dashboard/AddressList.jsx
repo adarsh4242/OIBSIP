@@ -1,0 +1,1 @@
+export default function AddressList({ addresses = [] }) { return <div className="panel"><h2 className="font-bold">Saved addresses</h2>{addresses.map((address) => <p className="mt-3" key={address._id}>{address.addressLine1}, {address.city}</p>)}</div>; }
