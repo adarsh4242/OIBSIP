@@ -2,35 +2,17 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true
-    },
-    phone: {
-      type: String,
-      required: true
-    },
-    address: {
-      type: String,
-      required: true
-    },
-    cart: [
+    items: [
       {
-        id: Number,
         name: String,
         price: Number,
-        quantity: Number
-      }
+        quantity: Number,
+      },
     ],
-    totalPrice: {
+    total: {
       type: Number,
-      required: true
+      required: true,
     },
-    status: {
-      type: String,
-      enum: ["Pending", "Preparing", "Out for Delivery", "Delivered"],
-      default: "Pending"
-    }
   },
   { timestamps: true }
 );
