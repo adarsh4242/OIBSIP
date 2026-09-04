@@ -35,6 +35,10 @@ jobs:
         run: npm run build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      - name: Verify production API configuration
+        run: test -n "$VITE_API_URL"
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
